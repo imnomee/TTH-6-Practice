@@ -1,0 +1,86 @@
+REPL - Read, Evaluate, Print, Loop
+node can work as a REPL
+node is terminal based
+
+run node
+and we can use javascript commands inside the node environment.
+
+process.argv: shows args passed onto the console with node in an array
+--------------------------
+Errors:
+Standard JS Errors
+System Errors
+User-specified Errors
+Assertion Errors
+
+error.stack - error location
+error.code - kind of error
+error.message - String description
+
+=====================
+npm init -y : -y initiates with all the default values
+
+Packing Installation:
+Two ways to install packages
+1. GLobal : If we want a package available for all the projects, we use global
+npm install -g package_name
+
+2. Local : If we want a package for single project we can use local installation
+npm install package_name : default Installation
+
+Level of access depends on the way of installation
+
+npm update express : to update the single package
+npm update : will update all the outdated packages
+
+npm outdated : get the list of outdated packages
+
+npm uninstall package : uninstall single package
+
+-------------
+http-server
+express
+express-generator
+nodemon
+body-parser
+cookie-parser
+===============
+Excluding the packages from node_modules
+
+==============
+express:
+Web application framework to create dynamic web apps.
+1. Templating
+2. URL Mapping / Routing
+3. User Input Processing
+
+Benefits:
+1. Write applications faster
+2. Focus on businss logic
+3. Understand other codebases
+4. Collaborate with other devs
+
+Similar Web frameworks
+1. Express / NodesJS
+2. Flask / Python
+3. Spark / java
+4. Sinatra / Ruby
+
+==============
+Template Engines:
+1. Handlebars
+2. EJS
+3. Pug (formerly Jade)
+
+=========
+Pug (jade)
+1. download Pug from npm : npm install pug --save
+2. update code in express app to use Pug : app.set('view engine', 'pug')
+3. create templates
+4. Render templates with response.render()
+
+==========
+Express middlewares
+app.use/get/post('/users', (req, res, next) => {
+      
+})
