@@ -7,14 +7,37 @@ app.use(cookieParser());
 
 app.set('view engine', 'pug'); //set the template engine to pug
 
+//MIDDLEWARES
+app.use((req, res, next) => {
+    req.message = 'This message made it from middleware one!';
+    const err = new Error('Oh noes!');
+    err.status = 500;
+    next();
+});
+
+app.use((req, res, next) => {
+    console.log(req.message);
+    next();
+});
+//Error Middleware
+(err, req, res, next) => {};
+
+/////////////////////////////
 app.get('/', (req, res) => {
     const name = req.cookies.username;
-    if (name) res.render('index', { name });
-    else res.redirect('/hello');
+    if (name) {
+        res.render('index', { name });
+    } else {
+        res.redirect('/hello');
+    }
 });
 
 app.get('/hello', (req, res) => {
-    res.render('hello');
+    if (req.cookies.username) {
+        res.redirect('/');
+    } else {
+        res.render('hello');
+    }
 });
 
 app.post('/hello', (req, res) => {
@@ -26,8 +49,18 @@ app.post('/goodbye', (req, res) => {
     res.redirect('/hello');
 });
 
-app.get('/sandbox', (req, res) => {});
+app.use((req, res, next) => {
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
+app.use((err, req, res, next) => {
+    console.log(err.status);
+    res.locals.error = err;
+    res.status(err.status);
+    res.render('error');
+});
 app.listen(4000, () => {
     console.log('The server is running on localhost:4000');
 });
