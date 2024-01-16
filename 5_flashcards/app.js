@@ -1,5 +1,8 @@
 const express = require('express'); //bring express
 const app = express(); // central part of the server
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
 // app.listen(3000); //running the listener alone wont do anything, because it won't send anything back
 app.set('view engine', 'pug'); //set the template engine to pug
@@ -10,8 +13,15 @@ app.get('/', (req, res) => {
     res.send('<h1>Oh Express</h1>');
 });
 app.get('/hello', (req, res) => {
-    res.send('<h1>Oh Hello Hello</h1>');
+    //     res.send('<h1>Oh Hello Hello</h1>');
+    res.render('hello');
 });
+app.post('/hello', (req, res) => {
+    //     console.log(req.body);
+    //     res.json(req.body);
+    res.render('hello', { name: req.body.username });
+});
+
 app.get('/pug', (req, res) => {
     res.render('index'); //response.render will look inside the views folder and we dont need to put pug extention, only the view name
 });
