@@ -3,11 +3,10 @@ const router = express.Router();
 const { recipes } = require('../data/data.json');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
     // 1. Pass all recipe data to 'index' template
     console.log(recipes);
-    res.render('index', { recipes });
-    next(recipes);
+    return res.render('index', { recipes });
 });
 
 /* GET recipe page. */
@@ -17,9 +16,9 @@ router.get('/recipes/:id', function (req, res, next) {
 
     if (recipe) {
         // 2. Pass the recipe data to the 'recipe' template
-        res.render('recipe');
+        return res.render('recipe', { recipe });
     } else {
-        res.sendStatus(404);
+        return res.sendStatus(404);
     }
 });
 
