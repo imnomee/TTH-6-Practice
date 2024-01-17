@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1 The Recipe Box
+  p A collection of delicious recipes for you to use in the kitchen.
+  each recipe in recipes
+    a(href=`/recipes/${recipe.id}`)
+      h2= recipe.recipe_name
+      img(src=`${recipe.image_url}` width='320' height='240')
