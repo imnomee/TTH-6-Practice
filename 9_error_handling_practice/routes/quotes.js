@@ -33,14 +33,14 @@ router.get('/:id', (req, res, next) => {
         * Forward the error to the global error handler
   */
     if (quotes[req.params.id]) {
-        res.render('quote', {
+        return res.render('quote', {
             title: 'Code Quote',
             quote: quotes[req.params.id],
         });
     } else {
         const err = new Error();
         err.status = 404;
-        err.message = "Looks like the quote you requested doesn't exist";
+        err.message = `Looks like the quote you requested doesn't exist. I only got about ${quotes.length} quotes starting from 0`;
         next(err);
     }
 });

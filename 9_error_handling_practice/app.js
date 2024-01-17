@@ -58,10 +58,10 @@ app.use((err, req, res, next) => {
         err.message =
             err.message ||
             "Oops!  It looks like the page you're looking for does not exist.";
-        res.status(404).render('not-found', { err });
+        return res.status(404).render('not-found', { err });
     } else {
         err.message = err.message || 'Oops, something went wrong.';
-        res.status(err.status || 500).render('error', { err });
+        return res.status(err.status || 500).render('error', { err });
     }
 });
 
