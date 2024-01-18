@@ -1,62 +1,97 @@
 const express = require('express');
 const app = express();
 const http = require('http');
+const data = require('./data');
 
-app.get('/', (req, res) => {
-    //handle route: get requests for '/'
-    //     res.send('<h1>Content</h1>'); //Express looks at content to figure out type automatically
-    //     res.end(); // to type headers set
-    //     res.json(); // set type to application.json
-    //     res.redirect(301, '/other'); //redirect to a different page with status code
-    //     res.format({
-    //         'text/plain': () => res.send('just some words'),
-    //         'text/html': () => res.send('<h1>Here be HTML</h1>'),
-    //         'application/json': () =>
-    //             res.send({ message: 'This is a JSON response' }),
-    //         'text/xml': () => res.send('<?xml version="1.0">'),
-    //         default: () => res.status(406).send('Not Acceptable'), //any other types I don't have
-    //     });
-    //     res.links({
-    //         first: 'http://localhost:3000/?page=1',
-    //         prev: 'http://localhost:3000/?page=2',
-    //         next: 'http://localhost:3000/?page=4',
-    //         last: 'http://localhost:3000/?page=9',
-    //         canonical: 'http://localhost:3000/page=3',
-    //         prefetch: 'http://localhost:3000/something.png',
-    //         preload: 'http://localhost:3000/something-else.png',
-    //     });
-    //     let locals = { name: 'Noms' };
-    //     res.render('myPugview', locals, (err, html) => {
-    //         if (err) {
-    //             console.log(err);
-    //             return;
-    //         } else {
-    //             console.log(html);
-    //             res.send(html);
-    //         }
-    //     });
-    //     res.set('Content-Type', 'text/html'); //set any headers as the first res.set and res.append both work together
-    //     res.append('Access-Control-Allow-Origin', '*'); // set headers after the first one
-    //     res.cookie('name', 'Nomee', {
-    //         domain: '.example.com',
-    //         path: '/',
-    //         secure: true,
-    //         maxAge: 2592000000, //expiry of the cookie in miliseconds
-    //     });
-    //     res.status(404).end();
-    //     res.type('application/json'); //sets the content-type header
-    //     res.sendFile('../cinnamon_roll.jpg', (err) => {
-    //         console.log(err);
-    //     });
-    //     res.attachment('/path/to/filename.png'); //sets Content-Disposition header
-    res.download(
-        './cinnamon_roll.jpg',
-        'filename.png',
-        (
-            err //Trigger the save diaglog, start the download and save the file
-        ) => console.log(err)
-    );
+app.use(express.json());
+
+app.get('/api/channels', (req, res) => {
+    //returns the list of channels
+    // respond with a 200
+    res.json(data);
+    console.log('GET', data.channels);
 });
+app.get('/api/channels/:id', (req, res) => {
+    //returns a specific channel
+    // respond with a 200
+    let obj = data.channels.find((item) => item.id === parseInt(req.params.id));
+    res.json(obj);
+    console.log('GET', obj);
+});
+
+app.post('/api/channels', (req, res) => {
+    //add new channels then return new list
+    // respond with a  201
+    const { name } = req.body;
+    let id =
+        data.channels.reduce((prev, curr) => {
+            return prev < curr.id ? curr.id : prev;
+        }, 0) + 1;
+    let last_update = Date.now();
+    let obj = { id, name, last_update };
+    data.channels.push(obj);
+    res.status(201).json(obj);
+    console.log('POST', data.channels);
+});
+
+app.put('/api/channels/:id', (req, res) => {
+    //replace channel based on id
+    //respond with 200 or 204
+    //202 if the operation is async and still pending
+    //similar to UPDATE but can also be used for Insert
+    // or we can choose to create a new id and do an Insert if the id doesn't exist
+
+    let id = parseInt(req.params.id);
+    let name = req.body.name;
+    let last_update = Date.now();
+    let idx = data.channels.findIndex((item) => item.id === id);
+    data.channels[idx].name = name;
+    data.channels[idx].last_update = last_update;
+    res.status(200).json(data.channels[idx]);
+    console.log('PUT', data.channels);
+});
+
+app.patch('/api/channels/:id', (req, res) => {
+    //edit a channel
+    // respond with 200 or 204
+    // 202 if action is still pending
+    let id = req.params.id;
+    let name = req.body.name;
+    let last_update = Date.now();
+    let idx = data.channels.findIndex((item) => item.id === id);
+    data.channels[idx].name = name;
+    data.channels[idx].last_update = last_update;
+    res.status(200).json(obj);
+    console.log('PATCH', data.channels);
+});
+
+app.delete('/api/channels/:id', (req, res) => {
+    //delete a channel
+    //200 or 204 status, 200 if pending
+    console.log('DELETE', data.channels);
+    let id = parseInt(req.params.id);
+    data.channels = data.channels.filter((item) => item.id !== id);
+    res.status(204).end();
+    console.log('DELETE', data.channels);
+});
+
+app.head('/api/channels', (req, res) => {
+    //returns only the headers just to see if the endpoint is functional
+    res.status(200).end();
+});
+
+app.options('/api/channels', (req, res) => {
+    res.status(200);
+    res.set('Allow', 'GET', 'POST', 'PATCH', 'DELETE', 'PUT');
+    res.set('Content-Length', '0');
+    res.end();
+});
+
+/*
+200: OK
+201: created
+202: accepted
+*/
 
 const port = 3000;
 app.listen(port, (err) => {
